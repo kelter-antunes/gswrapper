@@ -18,3 +18,9 @@ At its simplest, GSInterface implements two methods:
  The display interface provided by GSInteractive class is Windows Bitmap compatible that can be used in WPF System.Windows.Controls.Image.
  
  Eventhandler is used to raise an event when Ghostscript processes a pdf page. This generates a Bitmap which can then be picked up by calling program to obtain the Bitmap and handle it in Windows application.
+
+# Note:
+gswrapper uses GhostScriptDLLCore as reference to obtain the binaries from Ghostscript owned by Artifex.
+Artifex supplies these binaries under AGPL license terms, a copy of which can be found at: https://www.ghostscript.com/license.html
+
+gswrapper code and associated programs are owned by Kamban Software, Australia (c) 2020. All rights reserved. Website: https://kamban.com.au
