@@ -1,0 +1,101 @@
+﻿Message Handlers for gsapi_set_stdio
+=====================================
+First: 
+	Delegate: A delegate is a type that represents references to methods with a particular parameter 
+	list and return type. When you instantiate a delegate, you can associate its instance with any 
+	method with a compatible signature and return type. 
+
+Now Delegate a MessageEvent with following signature: 
+	Parameters: Callback function pointer, pointer for string buffer and integer length, 
+	Return type: int.
+	This is what is declared in DLLInterface as:
+	public delegate int StdioMessageEventHandler(IntPtr handle, IntPtr pointer, int count);
+
+This is the delegate that will be used for passing to callback function for gsapi_set_stdio
+This is based on gsapi function protytype given below: 
+int gsapi_set_stdio (void *instance, 
+		int(*stdin_fn)(void *caller_handle, char *buf, int len), 
+		int(*stdout_fn)(void *caller_handle, const char *str, int len), 
+		int(*stderr_fn)(void *caller_handle, const char *str, int len));
+
+Inorder to pass this function to gsapi_set_stdio we need to create three functions based on the delegate 
+They are:
+	private int StdInCallbackMessageEvent(IntPtr handle, IntPtr pointer, int count)
+	private int StdOutCallbackMessageEvent(IntPtr handle, IntPtr pointer, int count)
+	private int StdErrCallbackMessageEvent(IntPtr handle, IntPtr pointer, int count)
+
+Now we can pass these method to gsapi_set_stdio as follow:
+	result = gsSetStdio(pInstance, 
+                    new StdioMessageEventHandler(StdInCallbackMessageEvent), 
+                    new StdioMessageEventHandler(StdOutCallbackMessageEvent), 
+                    new StdioMessageEventHandler(StdErrCallbackMessageEvent));
+
+
+
+
+Second:  (not used in current program but useful for Wrapper or DLL implementation.)
+	Assuming if implemented it will be called in DLLInterface as Event Handler.
+
+	Event: An event is a message sent by an object to signal the occurrence of an action. 
+	The action can be caused by user interaction, such as a button click, or 
+	it can result from some other program logic
+	A derived class should always call the OnEventName method of the base class 
+	to ensure that registered delegates receive the event.
+	We only need to use this if the program is going to be a DLL or wrapper class. This 
+	will ensure that the calling program can also use this. Methods are given below but not implemented
+
+
+
+Raising and handling Events from DLL
+====================================
+
+1. Create a class based on EventArgs. This will contain all the variables that will be passed when the event is raised.
+(Variables can be made private and get/set to be used for passing data)
+    public class EventTest :EventArgs
+    {
+		public string status;
+        public int pages; 
+    }
+
+Delegate a Event handler delegate signature as follows. Note the event variable is the new event class
+public delegate void EventTestHandler(object sender, StatusEvents e)
+
+In your Event-raising application (DLL) create a public event based on the delegate name. Give it a name.
+	Public event EventTestHandler MyEvents;
+
+In your Event-raising application (DLL) create a event with the same delegate signature and declare it virtual. 
+Attach the event handler here (MyEvents) and call that if an event is attached.
+
+	public virtual void OnEventHandlerTest(object obj, StatusEvents e) //Same delegate signature as EventTestHandler delegate
+    {
+        EventHandlerTest handler = MyEvents; //Attach calling program handle here
+        if (handler != null)
+        {
+            handler(this, e);
+        }
+    }
+
+Call this OnEventHandlerTest event from your Event-raising application (DLL) passing appropriate data to the event variables
+        private void ProcessStatus(string status)
+        {
+            EventTest args = new EventTest();
+			args.message = status;
+            OnEventHandlerTest(null, args); //You can also use 'this' instead of 'null' for object or create your own object that can be used by handlers
+        }
+
+That's it. All set.
+
+Your application can now handle this call.
+
+Add an event handler to this. (Visual Studio can autofill as well by using Tab). This is the public event declared in your Event-raising app (DLL)
+	DLL.MyEvents += OnAppEventHandler;
+
+Now create an event and handle the event
+	private void OnEventHandlerTest(object sender, EventHandlerTest e)
+	{
+		string str = e.message;
+		.
+		.
+		.
+	} 
+	

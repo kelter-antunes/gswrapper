@@ -1,0 +1,262 @@
+﻿<Window x:Class="KSPdfView.MainWindow" x:Name="ksMain"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" 
+        Title="Kamban Software PDF Viewer" Height="800" MinWidth="400" Width="800" MinHeight="350" 
+        Initialized="KSMain_Initialized" Closing="KSMain_Closing" Icon="pdf1.ico">
+
+
+    <DockPanel>
+        
+        <!--Ribbon Control -->
+        <Ribbon x:Name="rbMain" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Margin="0,-22,0,0" >
+            
+            <Ribbon.ApplicationMenu >
+                <RibbonApplicationMenu Visibility="Collapsed" />
+            </Ribbon.ApplicationMenu>
+            
+            <RibbonTab Header="PDF Viewer">
+            
+                <!-- File Operations Group -->
+                <RibbonGroup Header="File Operations">
+                    <RibbonButton x:Name="btnFileOpen" Label="Open PDF File" LargeImageSource="open.ico" SmallImageSource="open.ico"
+                    ToolTipDescription="Use this Button to open image file for processing and render as text" 
+                    ToolTipTitle="Open Image File" Click="BtnFileOpen_Click" />
+                    
+                    <RibbonButton x:Name="btnCancel" Label="Stop Processing" LargeImageSource="stop.ico"  
+                    ToolTipDescription="Use this Button to Stop the running background loading of pages. Note: It may take some time to stop..." 
+                    ToolTipTitle="Stop Pages Loading"  IsEnabled="False" SmallImageSource="stop.ico" Click="BtnCancel_Click"  />
+
+                    <RibbonButton x:Name="btnExit" Label="Exit Application" LargeImageSource="Exit.ico" SmallImageSource="Exit.ico"
+                    ToolTipDescription="Use this Button to cancel all processing and exit from this Application" 
+                    ToolTipTitle="Exit Application" Click="BtnExit_Click" />
+
+                </RibbonGroup>
+                <!--End of File Operations Group -->
+                
+                <!--PDF Pages View Group-->
+                <RibbonGroup Header="PDF Pages" x:Name="hdrPDFPages" 
+                        ToolTipDescription="Use the silder control to Move to Next or Previous Pages" 
+                        ToolTipTitle="Flip Pages" LargeImageSource="pdf2.ico" SmallImageSource="pdf2.ico" >
+                    
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="View PDF Pages" Margin="0,5,0,15" FontSize="16" FontWeight="SemiBold"  Foreground="#FFF02828" HorizontalAlignment="Center"  />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Button Name="btnPrev" Grid.Column="0" Content="Prev" VerticalContentAlignment="Center" FontSize="16" Foreground="#FFF02828"  FontWeight="SemiBold" 
+                                Height="20"  BorderThickness="0" Padding="0,-5,0,0" Margin="5,0" Width="50"
+                                Background="{DynamicResource {x:Static SystemColors.GradientInactiveCaptionBrushKey}}" 
+                                Click="BtnPrev_Click" />
+                            
+                            <Slider Grid.Column="1" Name="slPage"  Orientation="Horizontal" Minimum="1" Maximum="1" SmallChange="1"
+                                Value="1" LargeChange="5"  TickFrequency="1" IsSnapToTickEnabled="True" 
+                                ToolTip="{Binding ElementName=slPage,Path=Value}" ValueChanged="SlPage_ValueChanged"  />
+
+                            <Button Name="btnNext" Grid.Column="2" Content="Next" Margin="5,0"  VerticalContentAlignment="Center" FontSize="16" Foreground="#FFF02828"  FontWeight="SemiBold" 
+                                Height="20" BorderThickness="0" Padding="0,-5,0,0"  Width="50"
+                                Background="{DynamicResource {x:Static SystemColors.GradientInactiveCaptionBrushKey}}" 
+                                Click="BtnNext_Click" />
+
+                        </Grid>
+                    </StackPanel>
+                </RibbonGroup>
+                <!--End of PDF View Group -->
+                
+                <!-- Page Zoom Group-->
+                <RibbonGroup Header="Page Zoom"  LargeImageSource="zoom.ico" SmallImageSource="zoom.ico"
+                    ToolTipDescription="Use the silder control to Zoom into or out of the image" 
+                        ToolTipTitle="Zoom Page" HorizontalAlignment="Center"  >
+
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="Zoom PDF Page" Margin="0,5,0,15" FontSize="16" FontWeight="SemiBold"  Foreground="#FF202080" HorizontalAlignment="Center" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="10" />
+                            </Grid.ColumnDefinitions>
+
+                            <Button Name="btnMinus" Grid.Column="0" Content="-" VerticalContentAlignment="Top" FontSize="16" Foreground="#FF202080"  FontWeight="SemiBold" 
+                                Height="16" BorderThickness="0" Padding="0,-5,0,0" Width="16" Background="{DynamicResource {x:Static SystemColors.GradientInactiveCaptionBrushKey}}" 
+                                Click="BtnMinus_Click" />
+
+                            <Slider Grid.Column="1" Name="slImage"  Orientation="Horizontal" Minimum="10" Maximum="250" SmallChange="5"
+                                Value="100" LargeChange="10"  TickFrequency="5" IsSnapToTickEnabled="True" 
+                                ToolTip="{Binding ElementName=slImage,Path=Value}" ValueChanged="SlImage_ValueChanged"  />
+
+                            <Button Name="btnPlus" Grid.Column="2" Content="+" VerticalContentAlignment="Top" FontSize="16" Foreground="#FF202080"  FontWeight="SemiBold" 
+                                Height="16" BorderThickness="0" Padding="0,-6,0,0" Width="16" Background="{DynamicResource {x:Static SystemColors.GradientInactiveCaptionBrushKey}}" 
+                                Click="BtnPlus_Click" Margin="0" />
+
+                            <TextBlock Grid.Column="3" Text="{Binding ElementName=slImage, Path=Value}"  Foreground="#FF202080"  FontWeight="SemiBold" Margin="5,0,0,0"/>
+                            <TextBlock Grid.Column="4" Text="%" Foreground="#FF202080"  FontWeight="SemiBold" />
+
+                        </Grid>
+                    </StackPanel>
+                </RibbonGroup>
+                <!-- End of Page Zoom Group-->
+                
+                <!--Help / License Information Group -->
+                <RibbonGroup Header="Miscellaneous" LargeImageSource="info.ico" SmallImageSource="info.ico"  >
+                    
+                    <RibbonToggleButton Name="btnDevelop" Label ="Developer Panel" LargeImageSource="web.ico" SmallImageSource="web.ico"
+                        ToolTipDescription="Click this button to view Developer Panel for testing the DLL"
+                        ToolTipTitle="Developer Panel Info" Click="BtnDevelop_Click" ClickMode="Press"          />
+
+                    <RibbonButton Name="btnLicense" Label="License Info"  LargeImageSource="info.ico" SmallImageSource="info.ico" 
+                        ToolTipDescription="Click this button to view License Information"
+                        ToolTipTitle="License Info" Click="BtnLicense_Click"          />
+                </RibbonGroup>
+                <!--End of Help / License Information Group -->
+
+            </RibbonTab>
+        </Ribbon>
+        <!-- End of Ribbon Control -->
+
+        <!--Status bar Panel -->
+        <StatusBar Padding="5,0,10,0" DockPanel.Dock="Bottom" HorizontalAlignment="Stretch"  VerticalAlignment="Bottom" 
+                   Background="{DynamicResource {x:Static SystemColors.GradientInactiveCaptionBrushKey}}" Margin="0" >
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="150" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+
+            <StatusBarItem Grid.Column="0" >
+                <TextBlock Name="tbkStatus" Text="Status: Ready" HorizontalAlignment="Center"  Foreground="#FF202080" FontWeight="SemiBold"
+                        ToolTip="{Binding ElementName= tbkStatus, Path=Text}" TextAlignment="Center" />
+            </StatusBarItem>
+
+            <Separator Grid.Column="1"/>
+
+            <StatusBarItem Grid.Column="2">
+                <Grid>
+                    <TextBlock Text="Progress: " Foreground="#FF202080" ToolTip="Current Progress of PDF" />
+                    <ProgressBar Name="pbrProgressStatus" Width="90" Height="16" Background="#FFF2F1FF" Margin="60,0,0,0" ToolTip="Current Progress of PDF" />
+                </Grid>
+            </StatusBarItem>
+        </StatusBar>
+        <!-- End of Status bar Panel -->
+
+        <!--#region Central Grid. Image Canvas and Debug Windows are displayed-->
+        <Grid Margin="0,2,0,0" x:Name="grdContent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition  x:Name="colImage" Width="*" MinWidth="150" />
+                <ColumnDefinition x:Name="colText" Width="350" MinWidth="300" />
+            </Grid.ColumnDefinitions>
+            
+            <!-- Canvas Image Dock -->
+        
+            <DockPanel   VerticalAlignment="Stretch" Grid.Column="0">
+                <DockPanel.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFE0E6E5" Offset="0"/>
+                        <GradientStop Color="#FFD6F5F0" Offset="1"/>
+                    </LinearGradientBrush>
+                </DockPanel.Background>
+                <ScrollViewer CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
+                    <Canvas x:Name="cvImage" ClipToBounds="True" SnapsToDevicePixels="True" >
+                        <Image x:Name="imgPDF"  Stretch="Fill" SizeChanged="ImgPDF_SizeChanged" >
+                            <Image.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform ScaleX="0.01" ScaleY="0.01"/>
+                                    <ScaleTransform>
+                                        <ScaleTransform.ScaleX>
+                                            <Binding ElementName="slImage" Path="Value" Mode="OneWay"/>
+                                        </ScaleTransform.ScaleX>
+                                        <ScaleTransform.ScaleY>
+                                            <Binding ElementName="slImage" Path="Value" Mode="OneWay"/>
+                                        </ScaleTransform.ScaleY>
+                                    </ScaleTransform>
+                                </TransformGroup>
+                            </Image.RenderTransform>
+                        </Image>
+                    </Canvas>
+                </ScrollViewer>
+            </DockPanel>
+            <!-- End of Image Canvas Dockpanel -->
+
+            <GridSplitter Name="gsLeftImage" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Stretch" ResizeBehavior="CurrentAndNext" 
+                          Width="3" BorderBrush="#FFD5DFE5"  BorderThickness="3" Visibility="Collapsed" />
+            
+            <DockPanel  VerticalAlignment="Stretch" Visibility="Visible" Grid.Column="1">
+                <Grid Margin="0,2,0,0" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition x:Name="rowOutput" Height="250" MinHeight="80" />
+                        <RowDefinition x:Name="rowErrOut" Height="100" MinHeight="80" />
+                        <RowDefinition x:Name="rowInput" Height ="*" MinHeight="100"/>
+                    </Grid.RowDefinitions>
+
+
+                    <!-- Output Window -->
+                    <GroupBox Header="Output Window" Margin="2,2,2,4" Grid.Row="0"  >
+                        <TextBox x:Name="tbOutput" DockPanel.Dock="Top"   TextWrapping="Wrap" AcceptsReturn="True"  IsReadOnly="True"
+                                 VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" Background="GhostWhite" 
+                                 VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"  
+                                 ToolTip="Output received from DLL" TextChanged="TbOutput_TextChanged" />
+                    </GroupBox>
+                    <!--End of Output Window -->
+                    <GridSplitter Name="gsErrWindow" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Height="3" 
+                                  BorderBrush="#FFD5DFE5"  BorderThickness="3" Grid.Row="0"/>
+                    
+                    <!-- Output Window -->
+                    <GroupBox Header="Error Window" Margin="2,2,2,4" Grid.Row="1"  >
+                        <TextBox x:Name="tbError" DockPanel.Dock="Top"   TextWrapping="Wrap" AcceptsReturn="False"  IsReadOnly="True"
+                                 VerticalAlignment="Stretch"  HorizontalAlignment="Stretch" Background="GhostWhite" 
+                                 VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"  Height="Auto"
+                                 ToolTip="Output received from DLL" />
+                    </GroupBox>
+                    <!--End of Output Window -->
+
+                    <GridSplitter Name="gsIOWindow" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Height="3" 
+                                  BorderBrush="#FFD5DFE5"  BorderThickness="3" Grid.Row="1"/> 
+
+                    <!--Input Window-->
+                    <Grid Grid.Row="2" MinHeight="100">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="30" />
+                        </Grid.RowDefinitions>                    
+                        <GroupBox Header="Input Postscript Commands" Margin="2,2,2,4" Grid.Row="0" >
+                            <TextBox Name="tbInput" Margin="5" TextWrapping="Wrap" 
+                                        AcceptsReturn="True" PreviewKeyDown="TbInput_PreviewKeyDown" ScrollViewer.CanContentScroll="True" VerticalScrollBarVisibility="Auto" />
+                        </GroupBox>
+                        <StackPanel Grid.Row="1" Orientation="Horizontal">
+                            <StackPanel.Background>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="#FFE0E6E5" Offset="0"/>
+                                    <GradientStop Color="#FFD6F5F0" Offset="1"/>
+                                </LinearGradientBrush>
+                            </StackPanel.Background>
+                            <Button x:Name="btnPSOpen" Margin="5" Content="Open PS File" Padding="3,0,3,0" Click="BtnPSOpen_Click" />
+                            <Button x:Name="btnSend" Margin="20,5,5,5" Content="Send Command" Padding="3,0,3,0" Click="BtnSend_Click" />
+                            <Button x:Name="btnClear" Margin="20,5,5,5" Content="Clear Script" Padding="3,0,3,0" Click="BtnClear_Click"  />
+
+                        </StackPanel>
+                    </Grid>
+                    <!-- End of Input Window -->
+
+
+                </Grid>
+            </DockPanel>
+        
+        </Grid> 
+        <!--#endregion-->
+                    
+    </DockPanel>
+</Window>
