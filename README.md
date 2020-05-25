@@ -19,6 +19,9 @@ At its simplest, GSInterface implements two methods:
  
  Eventhandler is used to raise an event when Ghostscript processes a pdf page. This generates a Bitmap which can then be picked up by calling program to obtain the Bitmap and handle it in Windows application.
 
+# KSPdfView
+A simple application based on gswrapper, which exploits the functionalities of GSInteractive and provides as a documentation. The source code itself is fully documented and self explanatory.
+
 # Note:
 gswrapper uses GhostScriptDLLCore as reference to obtain the binaries from Ghostscript owned by Artifex.
 Artifex supplies these binaries under AGPL license terms, a copy of which can be found at: https://www.ghostscript.com/license.html
