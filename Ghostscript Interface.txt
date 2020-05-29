@@ -20,6 +20,10 @@ readonly DisplayEventHandler _displayHandle;
         _stdErr = new StdioMessageEventHandler(OnStdIoError);
         _displayHandle = new DisplayEventHandler(GsInteractive_displayEvent);
         _gsInteractive = new GSInteractive();
+        if (!_gsInteractive.GSInitialise(_stdIn, _stdOut, _stdErr, _displayHandle))
+        {
+            //Handle error messages here and close application
+        }
         .
         .
         .
