@@ -1,5 +1,5 @@
 # gswrapper - a c# wrapper for Ghostscript DLL ver 9.52
-A simple but powerful interface for Ghostscript binaries fully compatible with x32 & x64 bit architecture that can be incorporated in c# based forms and WPF application.
+A simple but powerful interface for Ghostscript binaries fully compatible with x86 & 64 bit architecture that can be incorporated in c# based forms and WPF application.
 
 The gswrapper implements two classes GSInterface and GSInteractive either of which can be used in your application to bring PDF application compatibility.
 
