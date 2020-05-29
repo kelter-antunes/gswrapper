@@ -1,0 +1,78 @@
+﻿Ghostscript Interface:
+GSInteractive:
+In order to jump start using GSInteractive here are the few steps to follow:
+
+//Declare following variable
+readonly private Dictionary<int, System.Drawing.Bitmap> _pageBitmapList = new Dictionary<int, System.Drawing.Bitmap>();
+readonly StdioMessageEventHandler _stdIn = null;
+readonly StdioMessageEventHandler _stdOut = null;
+readonly StdioMessageEventHandler _stdErr = null;
+readonly GSInteractive _gsInteractive;
+readonly DisplayEventHandler _displayHandle;
+
+//Then initialize as follows
+    public MainWindow()
+    {
+        InitializeComponent();
+
+        _stdIn = new StdioMessageEventHandler(OnStdIoInput);
+        _stdOut = new StdioMessageEventHandler(OnStdIoOutput);
+        _stdErr = new StdioMessageEventHandler(OnStdIoError);
+        _displayHandle = new DisplayEventHandler(GsInteractive_displayEvent);
+        _gsInteractive = new GSInteractive();
+        .
+        .
+        .
+        .
+    }
+
+Now create the event handlers
+    //StdIO Input handler 
+    private int OnStdIoInput(IntPtr handle, IntPtr pointer, int count)
+    {
+        //Add routines if you want to handle input to Ghostscript
+        .
+        .
+        .
+        .
+        return count;
+    }
+
+    //StdIO Output handler
+    private int OnStdIoOutput(IntPtr handle, IntPtr pointer, int count)
+    {
+        string messsage = Marshal.PtrToStringAnsi(pointer, count);
+        //Handle the Ghostscript output messages - 'message'. Display it in a text box.
+        .
+        .
+        .
+        .
+
+        return count;
+    }
+
+    //StdIO Error handler
+    private int OnStdIoError(IntPtr handle, IntPtr pointer, int count)
+    {
+        string errmessage = Marshal.PtrToStringAnsi(pointer);
+        //Handle Ghostscript Error messages - 'errmessage' here. Save it to a log file
+        .
+        .
+        .
+        .
+        return count;
+    }
+
+    //Display Event handler
+    private void GsInteractive_displayEvent(object obj, DisplayEvent e)
+    {   
+        _pageBitmapList[_pageBitmapList.Count+1] = e.bmp;
+    }
+
+That's it. Your _pageBitmapList will contain bitmap for each pages of PDF document that are processed by Ghostscript.
+You can easily add this to your Canvas / Image. To convert the image to Bitmap do the following:
+System.Windows.Control.Image img.Source = 
+    System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(bitmap.GetHbitmap(),
+    IntPtr.Zero, System.Windows.Int32Rect.Empty, BitmapSizeOptions.FromWidthAndHeight(bitmap.Width, bitmap.Height));
+
+If you run into problems do not hesitate to drop a note. If you like it, why not give a rating?
