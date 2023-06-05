@@ -441,6 +441,8 @@ namespace GSWrapper
         /// <returns>True if successful</returns>
         private bool SetDllLib()
         {
+
+
             string dll = CONSTANTS.DLL32;
             string path = Environment.GetEnvironmentVariable("ProgramFiles(x86)");
 
@@ -450,7 +452,7 @@ namespace GSWrapper
                 path = Environment.GetEnvironmentVariable("ProgramFiles");
             }
 
-            string[] strfile = Directory.GetFiles(Directory.GetCurrentDirectory(), dll, SearchOption.AllDirectories);
+            string[] strfile = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, dll, SearchOption.AllDirectories);
             if (strfile.Length > 0)
             {
                 foreach (string f in strfile)
